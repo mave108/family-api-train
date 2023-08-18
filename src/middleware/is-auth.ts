@@ -1,10 +1,11 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+import {Request,Response,NextFunction} from 'express';
 
-module.exports = (req, res, next) => {
+export default(req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.get('Authorization');
   if (!authHeader) {
     const error = new Error('Not authenticated.');
-    error.statusCode = 401;
+    // error.statusCode = 401;
     throw error;
   }
   const token = authHeader.split(' ')[1];
@@ -12,14 +13,14 @@ module.exports = (req, res, next) => {
   try {
     decodedToken = jwt.verify(token, 'somesupersecretsecret');
   } catch (err) {
-    err.statusCode = 500;
+    // err.statusCode = 500;
     throw err;
   }
   if (!decodedToken) {
     const error = new Error('Not authenticated.');
-    error.statusCode = 401;
+    // error.statusCode = 401;
     throw error;
   }
-  req.userId = decodedToken.userId;
+  // req.userId = decodedToken.userId;
   next();
 };
