@@ -2,27 +2,31 @@ import {validationResult} from 'express-validator';
 import {Request, Response, NextFunction} from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient();
 
 export const signup = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
+  console.log("errors",errors);
   if (!errors.isEmpty()) {
     const error = new Error('Validation failed.');
     // error.statusCode = 422;
     // error.data = errors.array();
     throw error;
   }
-  const email = req.body.email;
-  const name = req.body.name;
-  const password = req.body.password;
+  const {email,password,first_name,last_name,nick_name} = req.body;
   bcrypt
     .hash(password, 12)
     .then(hashedPw => {
-      // const user = new User({
-      //   email: email,
-      //   password: hashedPw,
-      //   name: name
-      // });
-      // return user.save();
+      return prisma.user.create({
+        data: {
+          email,
+          password: hashedPw,
+          first_name,
+          last_name,
+          nick_name
+        }
+      })
     })
     .then(result => {
       res.status(201).json({ message: 'User created!' });

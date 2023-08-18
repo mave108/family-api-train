@@ -2,10 +2,23 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin"]
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  uid        String   @unique @default(uuid())
+  email      String   @unique @db.VarChar(60)
+  password   String   @db.VarChar(128)
+  first_name String   @db.VarChar(28)
+  last_name  String   @db.VarChar(28)
+  nick_name  String   @db.VarChar(12)
+  createdAt  DateTime @default(now())
+  updateAt   DateTime @updatedAt
 }

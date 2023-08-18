@@ -2,6 +2,8 @@
 import express from 'express';
 import {body} from 'express-validator';
 import {login,signup} from '../controllers/auth';
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient();
 
 const router = express.Router();
 
@@ -10,19 +12,15 @@ router.put(
   [
     body('email')
       .isEmail()
-      .withMessage('Please enter a valid email.')
-      // .custom((value, { req }) => {
-      //   return User.findOne({ email: value }).then(userDoc => {
-      //     if (userDoc) {
-      //       return Promise.reject('E-Mail address already exists!');
-      //     }
-      //   });
-      // })
-      .normalizeEmail(),
+      .withMessage('Please enter a valid email.'),
     body('password')
       .trim()
       .isLength({ min: 5 }),
-    body('name')
+    body('first_name')
+      .trim()
+      .not()
+      .isEmpty(),
+      body('last_name')
       .trim()
       .not()
       .isEmpty()
