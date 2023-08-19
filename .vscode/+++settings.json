@@ -1,0 +1,30 @@
+{
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true
+    },
+    "editor.tabSize": 2,
+    "editor.bracketPairColorization.enabled": true,
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "javascript.validate.enable": false,
+   "eslint.validate": ["javascript", "typescript"],
+   "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma",
+    "editor.formatOnSave": false
+  },
+    "[javascript]": {
+      "editor.formatOnSave": true
+    },
+    "[typescript]": {
+      "editor.formatOnSave": true
+    },
+  
+    "files.watcherExclude": {
+      "**/node_modules": true,
+      "**/tmp": true,
+      "**/dist": true,
+      "**/coverage": true
+    },
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "typescript.referencesCodeLens.enabled": true,
+  }

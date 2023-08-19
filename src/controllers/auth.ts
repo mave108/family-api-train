@@ -3,16 +3,14 @@ import {Request, Response, NextFunction} from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client'
+import {sendHttpResponse} from '../utils/http';
+
 const prisma = new PrismaClient();
 
 export const signup = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
-  console.log("errors",errors);
   if (!errors.isEmpty()) {
-    const error = new Error('Validation failed.');
-    // error.statusCode = 422;
-    // error.data = errors.array();
-    throw error;
+    res.status(400).json(sendHttpResponse(false,errors))
   }
   const {email,password,first_name,last_name,nick_name} = req.body;
   bcrypt
@@ -22,9 +20,6 @@ export const signup = (req: Request, res: Response, next: NextFunction) => {
         data: {
           email,
           password: hashedPw,
-          first_name,
-          last_name,
-          nick_name
         }
       })
     })
@@ -39,10 +34,44 @@ export const signup = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-export const login = (req: Request, res: Response, next: NextFunction) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  // let loadedUser;
+export const login = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(400).json(sendHttpResponse(false,errors))
+  }
+  const {email,password} = req.body;
+  const user = await prisma.user.findFirst({select:{
+    password: true,
+    uid: true,
+    email: true
+  },
+  where: {
+    email
+  }
+});
+console.log("user",user);
+if (!user?.password){
+  res.status(400).json(sendHttpResponse(false,{ error: 'Email or password is invalid'}));
+}
+if (user?.password){
+  const isAuthenticated = await bcrypt.compare(password,user?.password);
+  if(!isAuthenticated){
+    res.status(400).json(sendHttpResponse(false,{ error: 'Email or password is invalid'}))
+  }
+  const token = jwt.sign(
+        {
+          email: user.email,
+          uid: user.uid 
+        },
+        String(process.env.PW_ENCRYPTION_SECRET),
+        { expiresIn: '1h' }
+      );
+    res.status(201).json(sendHttpResponse<object>(true,null,{
+      uid: user.uid,
+      token
+    }))
+}
+
   // User.findOne({ email: email })
     // .then(user => {
       // if (!user) {

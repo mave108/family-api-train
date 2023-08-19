@@ -16,9 +16,9 @@ model User {
   uid        String   @unique @default(uuid())
   email      String   @unique @db.VarChar(60)
   password   String   @db.VarChar(128)
-  first_name String   @db.VarChar(28)
-  last_name  String   @db.VarChar(28)
-  nick_name  String   @db.VarChar(12)
+  first_name String?  @db.VarChar(28)
+  last_name  String?  @db.VarChar(28)
+  nick_name  String?  @db.VarChar(12)
   createdAt  DateTime @default(now())
   updateAt   DateTime @updatedAt
 }
