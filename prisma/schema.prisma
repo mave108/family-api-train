@@ -11,14 +11,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Members {
+  id        Int  @id @default(autoincrement())
+  owner_id  Int
+  user      User @relation(fields: [member_id], references: [id])
+  member_id Int  @unique
+}
+
 model User {
-  id         Int      @id @default(autoincrement())
-  uid        String   @unique @default(uuid())
-  email      String   @unique @db.VarChar(60)
-  password   String   @db.VarChar(128)
-  first_name String?  @db.VarChar(28)
-  last_name  String?  @db.VarChar(28)
-  nick_name  String?  @db.VarChar(12)
-  createdAt  DateTime @default(now())
-  updateAt   DateTime @updatedAt
+  id         Int        @id @default(autoincrement())
+  uid        String     @unique @default(uuid())
+  email      String     @unique @db.VarChar(60)
+  password   String     @db.VarChar(128)
+  first_name String?    @db.VarChar(28)
+  last_name  String?    @db.VarChar(28)
+  nick_name  String?    @db.VarChar(12)
+  createdAt  DateTime   @default(now())
+  updateAt   DateTime   @updatedAt
+  status     UserStatus @default(ACTIVE)
+  member     Members[]
 }

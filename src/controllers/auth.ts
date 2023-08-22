@@ -12,7 +12,7 @@ export const signup = (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     res.status(400).json(sendHttpResponse(false,errors))
   }
-  const {email,password,first_name,last_name,nick_name} = req.body;
+  const {email,password} = req.body;
   bcrypt
     .hash(password, 12)
     .then(hashedPw => {
@@ -37,10 +37,12 @@ export const signup = (req: Request, res: Response, next: NextFunction) => {
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.status(400).json(sendHttpResponse(false,errors))
+    res.status(400).json(sendHttpResponse(false,{ error: 'Email or password is invalid'}));
   }
+
   const {email,password} = req.body;
-  const user = await prisma.user.findFirst({select:{
+  const user = await prisma.user.findFirst({
+    select:{
     password: true,
     uid: true,
     email: true
@@ -49,7 +51,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     email
   }
 });
-console.log("user",user);
 if (!user?.password){
   res.status(400).json(sendHttpResponse(false,{ error: 'Email or password is invalid'}));
 }
@@ -71,7 +72,7 @@ if (user?.password){
       token
     }))
 }
-
+    next();
   // User.findOne({ email: email })
     // .then(user => {
       // if (!user) {

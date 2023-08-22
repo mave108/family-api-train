@@ -4,6 +4,10 @@ import express, {Request,Response,NextFunction,ErrorRequestHandler} from 'expres
 import bodyParser from 'body-parser';
 // import multer from 'multer';
 import authRoutes from './routes/auth';
+import { sendHttpResponse } from './utils/http';
+import MembersRoute from './routes/Members';
+import CustomError from './utils/Error';
+import isAuthenticated from './middleware/isAuthenticated';
 
 
 dotenv.config();
@@ -48,13 +52,11 @@ app.use((req, res, next) => {
 });
 
 app.use('/auth', authRoutes);
+app.use('/members',isAuthenticated, MembersRoute);
 
-app.use((error: ErrorRequestHandler, req:Request, res: Response, next:NextFunction) => {
-  console.log(error);
-  // const status = error.statusCode || 500;
-  // const message = error.message;
-  // const data = error.data;
-  // res.status(status).json({ message: message, data: data });
+app.use((error: CustomError, req:Request, res: Response, next:NextFunction) => {
+  res.status(error.getStatusCode())
+  .json(sendHttpResponse(false,{error: error.message}));
 });
 
 app.listen(8080);
