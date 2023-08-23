@@ -1,8 +1,9 @@
 // const authController = require('../controllers/auth');
 import express from 'express';
-import {body} from 'express-validator';
-import {login,signup } from '../controllers/auth';
+import { body } from 'express-validator';
+import { login, signup } from '../controllers/auth';
 import { PrismaClient } from '@prisma/client'
+import CustomError from '../utils/Error';
 const prisma = new PrismaClient();
 
 const router = express.Router();
@@ -11,10 +12,11 @@ router.put(
   '/signup',
   [
     body('email')
+      .notEmpty()
       .isEmail()
       .withMessage('Please enter a valid email.')
-      .custom( async value => {
-        const user = await prisma.user.findUnique({
+      .custom(async value => {
+        const user = await prisma.users.findUnique({
           select: {
             email: true,
           },
@@ -23,10 +25,13 @@ router.put(
           }
         });
         if (user) {
-          throw new Error('E-mail already in use');
+          return new CustomError('E-mail already in use')
+            .setStatusCode(400)
+            .throw();
         }
-      } ).normalizeEmail(),
+      }).normalizeEmail(),
     body('password')
+      .notEmpty()
       .trim()
       .isLength({ min: 5 }),
   ],
@@ -34,16 +39,16 @@ router.put(
 );
 
 router.post('/login', [body('email')
-.notEmpty()
-.isEmail()
-.withMessage('Please enter valid email address')
-.escape(),
+  .notEmpty()
+  .isEmail()
+  .withMessage('Please enter valid email address')
+  .escape(),
 body('password')
-.notEmpty()
-.trim()
-.isLength({min: 5})
+  .notEmpty()
+  .trim()
+  .isLength({ min: 5 })
 ]
-,login);
+  , login);
 
 export default router;
 

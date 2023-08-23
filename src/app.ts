@@ -1,6 +1,6 @@
 import path from 'path';
 import dotenv from 'dotenv';
-import express, {Request,Response,NextFunction,ErrorRequestHandler} from 'express';
+import express, { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import bodyParser from 'body-parser';
 // import multer from 'multer';
 import authRoutes from './routes/auth';
@@ -52,11 +52,11 @@ app.use((req, res, next) => {
 });
 
 app.use('/auth', authRoutes);
-app.use('/members',isAuthenticated, MembersRoute);
+app.use('/members', isAuthenticated, MembersRoute);
 
-app.use((error: CustomError, req:Request, res: Response, next:NextFunction) => {
+app.use((error: CustomError, req: Request, res: Response, next: NextFunction) => {
   res.status(error.getStatusCode())
-  .json(sendHttpResponse(false,{error: error.message}));
+    .json(sendHttpResponse(false, { error: error.message }));
 });
 
 app.listen(8080);
