@@ -1,7 +1,6 @@
 import { validationResult } from 'express-validator';
 import { Request } from 'express';
 import { CustomRequest, Response, NextFunction, getUserId } from '../utils/http';
-
 import { PrismaClient } from '@prisma/client'
 import { sendHttpResponse } from '../utils/http';
 
@@ -30,13 +29,6 @@ export const addMembers = async (req: CustomRequest, res: Response, next: NextFu
     res.status(201).json(sendHttpResponse(true, null, {
         msg: 'Record created successfully.'
     }));
-}
-export const addProfile = (req: CustomRequest, res: Response) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        res.status(400).json(sendHttpResponse(false, { error: errors.array() }));
-    }
-
 }
 export const getMembers = async (req: Request, res: Response) => {
 

@@ -33,20 +33,21 @@ model Members {
 
 model Profile {
   id             Int      @id @default(autoincrement())
-  userId         Int
+  user           Users    @relation(fields: [userId], references: [id])
+  userId         Int      @unique
   firstName      String   @db.VarChar(16)
-  middleName     String   @db.VarChar(16)
-  lastName       String   @db.VarChar(16)
-  nickName       String   @db.VarChar(8)
+  middleName     String?  @db.VarChar(16)
+  lastName       String?  @db.VarChar(16)
+  nickName       String?  @db.VarChar(8)
   gender         Gender
-  dob            DateTime @db.Date()
-  displayPicture Bytes    @db.LongBlob()
-  phone          Int      @unique @db.UnsignedInt()
-  addressLine1   String   @db.MediumText()
-  addressLine2   String   @db.MediumText()
-  city           String   @db.VarChar(16)
-  state          String   @db.VarChar(16)
-  country        String   @db.VarChar(16)
+  dob            DateTime @db.Date
+  displayPicture Bytes?   @db.LongBlob()
+  phone          String?  @unique
+  addressLine1   String?  @db.MediumText()
+  addressLine2   String?  @db.MediumText()
+  city           String?  @db.VarChar(16)
+  state          String?  @db.VarChar(16)
+  country        String?  @db.VarChar(16)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
@@ -60,4 +61,5 @@ model Users {
   updatedAt DateTime   @updatedAt
   status    UserStatus @default(ACTIVE)
   member    Members[]
+  Profile   Profile?
 }

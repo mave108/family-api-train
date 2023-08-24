@@ -8,6 +8,7 @@ import { sendHttpResponse } from './utils/http';
 import MembersRoute from './routes/Members';
 import CustomError from './utils/Error';
 import isAuthenticated from './middleware/isAuthenticated';
+import ProfileRoutes from './routes/Profiles'
 
 
 dotenv.config();
@@ -53,10 +54,11 @@ app.use((req, res, next) => {
 
 app.use('/auth', authRoutes);
 app.use('/members', isAuthenticated, MembersRoute);
+app.use('/profile', isAuthenticated, ProfileRoutes);
 
 app.use((error: CustomError, req: Request, res: Response, next: NextFunction) => {
   res.status(error.getStatusCode())
-    .json(sendHttpResponse(false, { error: error.message }));
+    .json(sendHttpResponse(false, { error: error.message }, error.getData()));
 });
 
 app.listen(8080);

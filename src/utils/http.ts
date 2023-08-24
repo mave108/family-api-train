@@ -7,8 +7,8 @@ export const sendHttpResponse = <T = any>(
     data?: T
 ) => ({
     status: isSuccess ? 'success' : 'error',
-    ...(isSuccess && { data }),
-    ...(!isSuccess && { ...error })
+    ...(!isSuccess && { ...error }),
+    data
 })
 
 export interface CustomRequest extends Request {
